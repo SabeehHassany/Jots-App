@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div>
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+        </div>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Content Dashboard</h1>
+        </div>
+        <div class="container">
+            <h1>Enter New Content</h1>
+            <form method="POST" action="/dashboard">
+                <label for="content">Enter Content:</label>
+                <input type="text" id="content" name="content">
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+</body>
+</html>

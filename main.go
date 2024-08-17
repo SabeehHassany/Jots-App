@@ -3,189 +3,128 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"text/template"
 )
 
-// main function starts the server and handles requests
+var templates = template.Must(template.ParseGlob("templates/*.html"))
+
 func main() {
-	// Set the root URL path to be handled by homeHandler function
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
 	http.HandleFunc("/", homeHandler)
+	http.HandleFunc("/login", loginHandler)
+	http.HandleFunc("/dashboard", dashboardHandler)
+	http.HandleFunc("/logout", logoutHandler)
 
-	// Log a message to indicate that the server is starting
 	fmt.Println("Starting server at :8080")
-
-	// Start the HTTP server on port 8080 and log any errors
 	http.ListenAndServe(":8080", nil)
 }
 
-// homeHandler handles HTTP requests to the root URL path
+// HomeHandler shows all jots
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	// Set the content type of the response to HTML with UTF-8 encoding
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-	// Check if the request method is POST (form submission)
-	if r.Method == "POST" {
-		// Parse the form data from the request
-		r.ParseForm()
-
-		// Extract the content submitted from the form
-		content := r.FormValue("content")
-
-		// Call a function to save the content to the MySQL database
-		saveContentToDB(content)
-
-		// HTML to be displayed after successful submission
-		html := `
-            <html>
-            <head>
-                <title>Content Submission</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        background-color: #f4f4f4;
-                        margin: 0;
-                        padding: 0;
-                    }
-                    header {
-                        background-color: #007bff;
-                        color: white;
-                        padding: 10px 0;
-                        text-align: center;
-                    }
-                    .container {
-                        width: 80%;
-                        margin: 20px auto;
-                        padding: 20px;
-                        background-color: white;
-                        border-radius: 8px;
-                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                    }
-                    h1 {
-                        font-size: 24px;
-                        margin-bottom: 20px;
-                    }
-                    form {
-                        display: flex;
-                        flex-direction: column;
-                    }
-                    label {
-                        margin-bottom: 5px;
-                        font-weight: bold;
-                    }
-                    input[type="text"] {
-                        padding: 10px;
-                        margin-bottom: 20px;
-                        border-radius: 4px;
-                        border: 1px solid #ccc;
-                    }
-                    input[type="submit"] {
-                        padding: 10px;
-                        background-color: #007bff;
-                        color: white;
-                        border: none;
-                        border-radius: 4px;
-                        cursor: pointer;
-                    }
-                    input[type="submit"]:hover {
-                        background-color: #0056b3;
-                    }
-                    .message {
-                        margin-top: 20px;
-                        padding: 10px;
-                        background-color: #d4edda;
-                        color: #155724;
-                        border: 1px solid #c3e6cb;
-                        border-radius: 4px;
-                    }
-                </style>
-            </head>
-            <body>
-                <header>
-                    <h1>Content Dashboard</h1>
-                </header>
-                <div class="container">
-                    <div class="message">Content submitted successfully!</div>
-                    <a href="/" style="display: block; margin-top: 20px; color: #007bff;">Submit another content</a>
-                </div>
-            </body>
-            </html>
-        `
-		// Write the HTML response back to the client
-		w.Write([]byte(html))
-
-	} else {
-		// HTML form to be displayed when the user first visits the page
-		html := `
-            <html>
-            <head>
-                <title>Content Submission</title>
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        background-color: #f4f4f4;
-                        margin: 0;
-                        padding: 0;
-                    }
-                    header {
-                        background-color: #007bff;
-                        color: white;
-                        padding: 10px 0;
-                        text-align: center;
-                    }
-                    .container {
-                        width: 80%;
-                        margin: 20px auto;
-                        padding: 20px;
-                        background-color: white;
-                        border-radius: 8px;
-                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                    }
-                    h1 {
-                        font-size: 24px;
-                        margin-bottom: 20px;
-                    }
-                    form {
-                        display: flex;
-                        flex-direction: column;
-                    }
-                    label {
-                        margin-bottom: 5px;
-                        font-weight: bold;
-                    }
-                    input[type="text"] {
-                        padding: 10px;
-                        margin-bottom: 20px;
-                        border-radius: 4px;
-                        border: 1px solid #ccc;
-                    }
-                    input[type="submit"] {
-                        padding: 10px;
-                        background-color: #007bff;
-                        color: white;
-                        border: none;
-                        border-radius: 4px;
-                        cursor: pointer;
-                    }
-                    input[type="submit"]:hover {
-                        background-color: #0056b3;
-                    }
-                </style>
-            </head>
-            <body>
-                <header>
-                    <h1>Content Dashboard</h1>
-                </header>
-                <div class="container">
-                    <h1>Enter New Content</h1>
-                    <form method="POST" action="/">
-                        <label for="content">Enter Content:</label>
-                        <input type="text" id="content" name="content">
-                        <input type="submit" value="Submit">
-                    </form>
-                </div>
-            </body>
-            </html>
-        `
-		// Write the HTML response back to the client
-		w.Write([]byte(html))
+	if !isAuthenticated(r) {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
 	}
+
+	jots, err := fetchAllJots()
+	if err != nil {
+		http.Error(w, "Unable to fetch jots", http.StatusInternalServerError)
+		return
+	}
+
+	data := struct {
+		Jots []Jot
+	}{
+		Jots: jots,
+	}
+
+	err = templates.ExecuteTemplate(w, "home.html", data)
+	if err != nil {
+		http.Error(w, "Unable to render template", http.StatusInternalServerError)
+	}
+}
+
+// DashboardHandler displays the content submission page
+func dashboardHandler(w http.ResponseWriter, r *http.Request) {
+	if !isAuthenticated(r) {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	if r.Method == "POST" {
+		r.ParseForm()
+		content := r.FormValue("content")
+		userID := getAuthenticatedUserID(r)
+		saveContentToDB(content, userID)
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+		return
+	}
+
+	templates.ExecuteTemplate(w, "dashboard.html", nil)
+}
+
+// LoginHandler handles user authentication
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		r.ParseForm()
+		username := r.FormValue("username")
+		password := r.FormValue("password")
+
+		ok, userID := authenticateUser(username, password)
+		if ok {
+			setSession(userID, w)
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+
+		http.Redirect(w, r, "/login?error=invalid_credentials", http.StatusSeeOther)
+		return
+	}
+
+	templates.ExecuteTemplate(w, "login.html", nil)
+}
+
+// LogoutHandler clears the session and redirects to login
+func logoutHandler(w http.ResponseWriter, r *http.Request) {
+	clearSession(w)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+}
+
+// SetSession sets a cookie for the session
+func setSession(userID int, w http.ResponseWriter) {
+	cookie := http.Cookie{
+		Name:  "session_token",
+		Value: fmt.Sprintf("%d", userID),
+		Path:  "/",
+	}
+	http.SetCookie(w, &cookie)
+}
+
+// ClearSession clears the session cookie
+func clearSession(w http.ResponseWriter) {
+	cookie := http.Cookie{
+		Name:   "session_token",
+		Value:  "",
+		Path:   "/",
+		MaxAge: -1,
+	}
+	http.SetCookie(w, &cookie)
+}
+
+// IsAuthenticated checks if a user is logged in
+func isAuthenticated(r *http.Request) bool {
+	cookie, err := r.Cookie("session_token")
+	if err != nil || cookie.Value == "" {
+		return false
+	}
+	return true
+}
+
+// GetAuthenticatedUserID returns the ID of the logged-in user
+func getAuthenticatedUserID(r *http.Request) int {
+	cookie, _ := r.Cookie("session_token")
+	var userID int
+	fmt.Sscanf(cookie.Value, "%d", &userID)
+	return userID
 }
