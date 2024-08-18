@@ -4,29 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Jots</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/styles.css"> <!-- Link to external CSS file for styling -->
 </head>
 <body>
+    <!-- Sidebar navigation -->
     <div class="sidebar">
         <div>
-            <a href="/">Home</a>
-            <a href="/dashboard">Dashboard</a>
+            <a href="/">Home</a> <!-- Link to Home page -->
+            <a href="/dashboard">Dashboard</a> <!-- Link to Content Dashboard -->
         </div>
-        <a href="/logout">Logout</a>
+        <a href="/logout">Logout</a> <!-- Link to log out of the application -->
     </div>
 
+    <!-- Main content area -->
     <div class="main-content">
+        <!-- Header section -->
         <div class="header">
-            <h1>Jots</h1>
+            <h1>Jots</h1> <!-- Title for the page -->
         </div>
+        <!-- Displaying jots -->
         <div>
-            {{range .Jots}}
+            {{range .Jots}} <!-- Loop through each jot in the data passed to the template -->
             <div class="jot">
-                <p>{{.Text}}</p>
-                <small>Posted by {{.Username}} on {{.CreatedAt.Format "Jan 2, 2006 at 3:04pm"}}</small>
+                <p>{{.Text}}</p> <!-- Display the text of the jot -->
+                <small>Posted by {{.Username}} on {{.CreatedAt.Format "Jan 2, 2006 at 3:04pm"}}</small> <!-- Display the username and timestamp -->
             </div>
             {{else}}
-            <p>No jots yet!</p>
+            <p>No jots yet!</p> <!-- Message if there are no jots to display -->
             {{end}}
         </div>
     </div>

@@ -4,131 +4,157 @@ body {
     padding: 0;
     background-color: #f4f4f4;
     display: flex;
-    min-height: 100vh;
+    min-height: 100vh; /* Ensures the body takes up the full height of the viewport */
 }
 
+/* Sidebar Styling */
 .sidebar {
-    width: 150px;
+    width: 150px; 
     background-color: #007bff;
     color: white;
     padding: 20px;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100vh;
-    position: fixed; /* Fix the sidebar position */
-    top: 0; /* Align it to the top of the viewport */
-    left: 0; /* Align it to the left of the viewport */
+    flex-direction: column; /* Aligns items vertically */
+    justify-content: space-between; /* Distributes space evenly between elements */
+    height: 100vh; /* Makes the sidebar span the full height of the viewport */
+    position: fixed; /* Fixes the sidebar in place, so it doesn't scroll with the content */
+    top: 0; /* Aligns the sidebar to the top of the viewport */
+    left: 0; /* Aligns the sidebar to the left of the viewport */
 }
 
+/* Sidebar Links Styling */
 .sidebar a {
-    color: white;
-    text-decoration: none;
-    margin: 15px 0;
-    font-size: 18px;
-    display: block;
+    color: white; /* Link color */
+    text-decoration: none; /* Removes underline from links */
+    margin: 20px 0; /* Vertical spacing between links */
+    font-size: 18px; /* Font size for the links */
+    display: block; /* Makes the links block elements, so they take up full width */
 }
 
+/* Sidebar Link Hover Effects */
 .sidebar a:hover {
-    text-decoration: none;
-    background-color: rgba(255, 255, 255, 0.1);
+    text-decoration: none; /* Ensures underline doesn't reappear on hover */
+    background-color: rgba(255, 255, 255, 0.1); /* Lightens background on hover */
     padding: 10px;
-    border-radius: 4px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 8px; /* Rounds the corners of the hover effect */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Adds a shadow effect on hover */
 }
 
+/* Main Content Area Styling */
 .main-content {
-    flex-grow: 1;
+    flex-grow: 1; /* Ensures the main content takes up available space */
     padding: 20px;
-    margin-left: 170px; /* Space for the sidebar */
-    margin-top: 0; /* Ensure it's not pushed down by the header */
+    padding-top: 73px; /* Adjust this value to move the first jot down */
+    margin-left: 170px; /* Creates space for the sidebar */
+    margin-top: 0px; /* Ensures the content isn't pushed down by the header */
 }
 
+/* Header Styling */
 .header {
-    background-color: #007bff;
+    background-color: #2f93fe; /* Header background color */
     color: white;
     padding: 10px;
     text-align: center;
-    margin-left: 170px; /* Align with main content */
+    margin: 0; /* Removes default margins */
+    width: calc(100% - 150px); /* Stretches the header to the right end, accounting for sidebar */
+    position: fixed; /* Fixes the header at the top of the page */
+    top: 0;
+    left: 190px; /* Aligns the header with the sidebar */
+    z-index: 1000; /* Ensures the header stays on top of other elements */
 }
 
+/* Container Styling (For forms, content boxes, etc.) */
 .container {
     width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
+    max-width: 600px; /* Limits the width of the container */
+    margin: 0 auto; /* Centers the container horizontally */
     padding: 20px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: white; /* Background color for the container */
+    border-radius: 8px; /* Rounds the corners of the container */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow around the container */
+    margin-top: 30px; /* Creates space below the fixed header */
 }
 
+/* Headings Styling */
 h1 {
     font-size: 24px;
     margin-bottom: 20px;
 }
 
+/* Form Styling */
 form {
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Aligns form elements vertically */
 }
 
+/* Label Styling */
 label {
     margin-bottom: 5px;
-    font-weight: bold;
+    font-weight: bold; /* Makes labels bold */
 }
 
+/* Text and Password Input Fields Styling */
 input[type="text"],
 input[type="password"] {
     padding: 10px;
     margin-bottom: 20px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
+    border-radius: 4px; /* Rounds the corners of input fields */
+    border: 1px solid #ccc; /* Adds a border around input fields */
 }
 
+/* Submit Button Styling */
 input[type="submit"] {
     padding: 10px;
-    background-color: #007bff;
+    background-color: #007bff; /* Button background color */
     color: white;
     border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    border-radius: 4px; /* Rounds the corners of the button */
+    cursor: pointer; /* Changes cursor to a pointer on hover */
     width: 100%;
 }
 
+/* Submit Button Hover Effect */
 input[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: #0056b3; /* Darkens the button on hover */
 }
 
+/* Individual Jot Styling */
 .jot {
     background-color: white;
     padding: 15px;
     margin-bottom: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    margin-left: 10px;
+    border-radius: 8px; /* Rounds the corners of the jot container */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow around the jot */
 }
 
+/* Jot Paragraph Text Styling */
 .jot p {
     font-size: 16px;
 }
 
+/* Jot Timestamp Text Styling */
 .jot small {
-    color: #555;
+    color: #555; /* Subtle text color for timestamps */
 }
 
+/* Login Container Styling */
 .login-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: center; /* Centers the login form horizontally */
+    align-items: center; /* Centers the login form vertically */
     height: 100vh;
     width: 100%;
     background-color: #f4f4f4;
 }
 
+/* Login Form Styling */
 .login-form {
     width: 100%;
-    max-width: 400px;
+    max-width: 400px; /* Limits the width of the login form */
     padding: 20px;
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px; /* Rounds the corners of the login form */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow around the form */
 }

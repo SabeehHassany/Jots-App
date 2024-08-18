@@ -4,18 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/styles.css"> <!-- Link to external CSS file for styling -->
 </head>
 <body>
+    <!-- Login container to center the form -->
     <div class="login-container">
         <div class="login-form">
-            <h1>Login</h1>
-            <form method="POST" action="/login">
+            <h1>Login</h1> <!-- Title for the login form -->
+            <!-- Login form -->
+            <form method="POST" action="/login"> <!-- Form submission to the /login route -->
                 <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required><br><br>
+                <input type="text" id="username" name="username" required><br><br> <!-- Username input field -->
                 <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required><br><br>
-                <input type="submit" value="Login">
+                <input type="password" id="password" name="password" required><br><br> <!-- Password input field -->
+                <input type="submit" value="Login"> <!-- Submit button for the form -->
             </form>
         </div>
     </div>

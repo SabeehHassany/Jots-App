@@ -4,27 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Content Dashboard</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/styles.css"> <!-- Link to external CSS file for styling -->
 </head>
 <body>
+    <!-- Sidebar navigation -->
     <div class="sidebar">
         <div>
-            <a href="/">Home</a>
-            <a href="/dashboard">Dashboard</a>
+            <a href="/">Home</a> <!-- Link to Home page -->
+            <a href="/dashboard">Dashboard</a> <!-- Link to Content Dashboard -->
         </div>
-        <a href="/logout">Logout</a>
+        <a href="/logout">Logout</a> <!-- Link to log out of the application -->
     </div>
 
+    <!-- Main content area -->
     <div class="main-content">
+        <!-- Header section -->
         <div class="header">
-            <h1>Content Dashboard</h1>
+            <h1>Content Dashboard</h1> <!-- Title for the page -->
         </div>
+        <!-- Content entry form -->
         <div class="container">
-            <h1>Enter New Content</h1>
-            <form method="POST" action="/dashboard">
+            <h1>Enter New Content</h1> <!-- Form heading -->
+            <form method="POST" action="/dashboard"> <!-- Form submission to the /dashboard route -->
                 <label for="content">Enter Content:</label>
-                <input type="text" id="content" name="content">
-                <input type="submit" value="Submit">
+                <input type="text" id="content" name="content"> <!-- Text input for new content -->
+                <input type="submit" value="Submit"> <!-- Submit button for the form -->
             </form>
         </div>
     </div>
