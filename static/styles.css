@@ -100,6 +100,7 @@ input[type="password"] {
     margin-bottom: 10px;
     border-radius: 4px; /* Rounds the corners of input fields */
     border: 1px solid #ccc; /* Adds a border around input fields */
+    width: 100%; /* Ensure inputs take full width */
 }
 
 /* Submit Button Styling */
@@ -157,4 +158,25 @@ input[type="submit"]:hover {
     background-color: white;
     border-radius: 10px; /* Rounds the corners of the login form */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow around the form */
+}
+
+/* Links within forms */
+.login-form a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.login-form a:hover {
+    text-decoration: underline;
+}
+
+/* Error message styling */
+.error-message {
+    background-color: #f8d7da; /* Light red background */
+    color: #721c24; /* Red text color */
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold; /* Make the text bold for emphasis */
 }
