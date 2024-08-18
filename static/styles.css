@@ -97,7 +97,7 @@ label {
 input[type="text"],
 input[type="password"] {
     padding: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     border-radius: 4px; /* Rounds the corners of input fields */
     border: 1px solid #ccc; /* Adds a border around input fields */
 }
@@ -146,7 +146,7 @@ input[type="submit"]:hover {
     align-items: center; /* Centers the login form vertically */
     height: 100vh;
     width: 100%;
-    background-color: #f4f4f4;
+    background-color: #e8e8e8;
 }
 
 /* Login Form Styling */
@@ -155,6 +155,6 @@ input[type="submit"]:hover {
     max-width: 400px; /* Limits the width of the login form */
     padding: 20px;
     background-color: white;
-    border-radius: 8px; /* Rounds the corners of the login form */
+    border-radius: 10px; /* Rounds the corners of the login form */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adds a subtle shadow around the form */
 }
