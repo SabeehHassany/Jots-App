@@ -180,3 +180,57 @@ input[type="submit"]:hover {
     text-align: center;
     font-weight: bold; /* Make the text bold for emphasis */
 }
+
+/* Container for all channels */
+.channels-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Space between each bubble */
+    margin-top: 20px;
+}
+
+/* Styling for each channel bubble */
+.channel-bubble {
+    background-color: #ffffff; /* White background for the bubble */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for the bubble */
+    padding: 20px;
+    width: 200px; /* Fixed width for each bubble */
+    text-align: center; /* Centered text inside the bubble */
+    transition: transform 0.2s; /* Smooth transformation on hover */
+}
+
+/* Hover effect for channel bubble */
+.channel-bubble:hover {
+    transform: scale(1.05); /* Slightly increase the size of the bubble on hover */
+}
+
+/* Channel name styling */
+.channel-bubble h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* Follower count styling */
+.channel-bubble p {
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: #555555; /* Grey color for follower count */
+    //border: 1px solid red;
+    
+}
+
+/* Follow/Unfollow button styling */
+.channel-bubble button {
+    padding: 10px 20px;
+    background-color: #007bff; /* Blue background for the button */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Follow/Unfollow button hover effect */
+.channel-bubble button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}

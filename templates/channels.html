@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Channels</title>
+    <link rel="stylesheet" href="/static/styles.css"> <!-- Link to external CSS file for styling -->
+</head>
+
+<body>
+    <!-- Sidebar navigation -->
+    <div class="sidebar">
+        <div>
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/channels">Channels</a> <!-- Current page link -->
+        </div>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-content">
+        <!-- Header section -->
+        <div class="header">
+            <h1>Channels</h1> <!-- Title for the page -->
+        </div>
+        <!-- List of Channels -->
+        <div class="channels-container">
+            {{range .Channels}}
+            <div class="channel-bubble">
+                <h2>{{.Name}}</h2> <!-- Channel name -->
+                <p>{{.FollowerCount}} Followers</p> <!-- Number of followers -->
+                <form method="POST" action="/follow-channel">
+                    <input type="hidden" name="channelID" value="{{.ID}}">
+                    <input type="hidden" name="action" value="{{if .IsFollowing}}unfollow{{else}}follow{{end}}">
+                    <button type="submit">{{if .IsFollowing}}Unfollow{{else}}Follow{{end}}</button>
+                </form>
+            </div>
+            {{end}}
+            
+        </div>
+    </div>
+</body>
+</html>

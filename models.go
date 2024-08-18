@@ -129,3 +129,97 @@ func FetchAllJots() ([]Jot, error) {
 
 	return jots, nil
 }
+
+// Channel struct to hold a single channel's details
+type Channel struct {
+	ID            int
+	Name          string
+	IsFollowing   bool
+	FollowerCount int // Add this if it doesn't exist
+}
+
+// Fetch all channels from the database
+func FetchAllChannels(userID int) ([]Channel, error) {
+	rows, err := db.Query(`
+        SELECT c.id, c.name, 
+               COUNT(uf1.user_id) as follower_count,
+               CASE WHEN uf2.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_following
+        FROM channels c
+        LEFT JOIN user_follows uf1 ON c.id = uf1.channel_id
+        LEFT JOIN user_follows uf2 ON c.id = uf2.channel_id AND uf2.user_id = ?
+        GROUP BY c.id, c.name, is_following
+    `, userID)
+	if err != nil {
+		log.Printf("Query error: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var channels []Channel
+	for rows.Next() {
+		var channel Channel
+		err := rows.Scan(&channel.ID, &channel.Name, &channel.FollowerCount, &channel.IsFollowing)
+		if err != nil {
+			log.Printf("Scan error: %v", err)
+			return nil, err
+		}
+		channels = append(channels, channel)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Printf("Rows iteration error: %v", err)
+		return nil, err
+	}
+
+	return channels, nil
+}
+
+// Save a user's channel follow/unfollow action
+func ToggleFollowChannel(userID, channelID int, follow bool) error {
+	if follow {
+		// Check if the user is already following the channel
+		var exists bool
+		err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM user_follows WHERE user_id = ? AND channel_id = ?)", userID, channelID).Scan(&exists)
+		if err != nil {
+			log.Printf("Error checking follow status: %v", err)
+			return err
+		}
+
+		// If the user is not already following, insert the follow record
+		if !exists {
+			_, err := db.Exec("INSERT INTO user_follows (user_id, channel_id) VALUES (?, ?)", userID, channelID)
+			if err != nil {
+				log.Printf("Error following channel: %v", err)
+				return err
+			}
+			//log.Println("User followed the channel successfully.")
+		} else {
+			log.Println("User is already following the channel.")
+		}
+	} else {
+		// Unfollow the channel
+		_, err := db.Exec("DELETE FROM user_follows WHERE user_id = ? AND channel_id = ?", userID, channelID)
+		if err != nil {
+			log.Printf("Error unfollowing channel: %v", err)
+			return err
+		}
+		//log.Println("User unfollowed the channel successfully.")
+	}
+	return nil
+}
+
+// Check if a user is following a specific channel
+func IsUserFollowingChannel(userID, channelID int) (bool, error) {
+	var exists bool
+	err := db.QueryRow(`
+        SELECT EXISTS(
+            SELECT 1 FROM user_follows 
+            WHERE user_id = ? AND channel_id = ?
+        )
+    `, userID, channelID).Scan(&exists)
+	if err != nil {
+		log.Printf("Query error: %v", err)
+		return false, err
+	}
+	return exists, nil
+}

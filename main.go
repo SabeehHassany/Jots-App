@@ -17,11 +17,13 @@ func main() {
 
 	// Define route handlers
 	// Each handler corresponds to a specific URL path
-	http.HandleFunc("/", HomeHandler)               // Home page showing all jots
-	http.HandleFunc("/login", LoginHandler)         // Login page for user authentication
-	http.HandleFunc("/signup", SignupHandler)       // Signup page for new user registration
-	http.HandleFunc("/dashboard", DashboardHandler) // Dashboard for submitting new content
-	http.HandleFunc("/logout", LogoutHandler)       // Logout route to clear user session
+	http.HandleFunc("/", HomeHandler)                        // Home page showing all jots
+	http.HandleFunc("/login", LoginHandler)                  // Login page for user authentication
+	http.HandleFunc("/signup", SignupHandler)                // Signup page for new user registration
+	http.HandleFunc("/dashboard", DashboardHandler)          // Dashboard for submitting new content
+	http.HandleFunc("/channels", ChannelsHandler)            // New Channels route
+	http.HandleFunc("/follow-channel", FollowChannelHandler) // New follow/unfollow route
+	http.HandleFunc("/logout", LogoutHandler)                // Logout route to clear user session
 
 	// Start the HTTP server on port 8080
 	// ListenAndServe blocks and waits for incoming requests

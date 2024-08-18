@@ -9,6 +9,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"strconv" // Import the strconv package
 	"text/template"
 )
 
@@ -195,4 +196,65 @@ func GetAuthenticatedUserID(r *http.Request) int {
 	var userID int
 	fmt.Sscanf(cookie.Value, "%d", &userID)
 	return userID
+}
+
+// ChannelsHandler displays the channels page
+func ChannelsHandler(w http.ResponseWriter, r *http.Request) {
+	// Get the authenticated user ID
+	userID := GetAuthenticatedUserID(r)
+
+	// Fetch all channels, passing the userID as an argument
+	channels, err := FetchAllChannels(userID)
+	if err != nil {
+		http.Error(w, "Unable to fetch channels", http.StatusInternalServerError)
+		return
+	}
+
+	// For each channel, check if the user is following it
+	for i := range channels {
+		isFollowing, err := IsUserFollowingChannel(userID, channels[i].ID)
+		if err != nil {
+			http.Error(w, "Error checking following status", http.StatusInternalServerError)
+			return
+		}
+		channels[i].IsFollowing = isFollowing
+	}
+
+	// Prepare data to pass to the template
+	data := struct {
+		Channels []Channel
+	}{
+		Channels: channels,
+	}
+
+	// Render the template with the channel data
+	templates.ExecuteTemplate(w, "channels.html", data)
+}
+
+// FollowChannelHandler handles the follow/unfollow action for a channel
+func FollowChannelHandler(w http.ResponseWriter, r *http.Request) {
+	if !IsAuthenticated(r) {
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
+	}
+
+	userID := GetAuthenticatedUserID(r)
+	r.ParseForm()
+	channelIDStr := r.FormValue("channelID")
+	follow := r.FormValue("action") == "follow" // Ensure this line correctly sets follow to true or false based on the button clicked.
+
+	// Convert channelID from string to int
+	channelID, err := strconv.Atoi(channelIDStr)
+	if err != nil {
+		http.Error(w, "Invalid channel ID", http.StatusBadRequest)
+		return
+	}
+
+	err = ToggleFollowChannel(userID, channelID, follow)
+	if err != nil {
+		http.Error(w, "Unable to update follow status", http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, "/channels", http.StatusSeeOther)
 }
