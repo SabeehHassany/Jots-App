@@ -1,31 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/styles.css"> <!-- Link to external CSS file for styling -->
 </head>
+
 <body>
+    <!-- Main container for the sign-up form -->
     <div class="login-container">
+        <!-- Sign-up form box -->
         <div class="login-form">
             <!-- Display error message if any -->
             {{if .Error}}
-            <div class="error-message">{{.Error}}</div>
+            <div class="error-message">{{.Error}}</div> <!-- Error message box -->
             {{end}}
 
-            <h1>Sign Up</h1>
+            <h1>Sign Up</h1> <!-- Form title -->
 
-            <!-- Sign up form -->
-            <form method="POST" action="/signup">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
+            <!-- Sign-up form -->
+            <form method="POST" action="/signup"> <!-- Form submission to the /signup route -->
+                <label for="username">Username:</label> <!-- Label for username input -->
+                <input type="text" id="username" name="username" required> <!-- Text input for username -->
+
+                <label for="password">Password:</label> <!-- Label for password input -->
+                <input type="password" id="password" name="password" required> <!-- Password input field -->
+
+                <!-- Link to go back to the login page -->
                 <a href="/login">Go back to login here</a><br><br>
+
+                <!-- Submit button for the form -->
                 <input type="submit" value="Sign Up">
             </form>
         </div>
     </div>
 </body>
+
 </html>

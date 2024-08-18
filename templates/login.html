@@ -1,29 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/styles.css"> <!-- Link to external CSS file for styling -->
 </head>
+
 <body>
+    <!-- Main container for the login form -->
     <div class="login-container">
+        <!-- Login form box -->
         <div class="login-form">
+            <!-- Display error message if any -->
             {{if .Error}}
-            <div class="error-message">{{.Error}}</div>
+            <div class="error-message">{{.Error}}</div> <!-- Error message box -->
             {{end}}
 
-            <h1>Login</h1>
+            <h1>Login</h1> <!-- Form title -->
 
-            <form method="POST" action="/login">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-                <a href="/signup">Don't have an account? Sign up here</a><br><br>       
+            <!-- Login form -->
+            <form method="POST" action="/login"> <!-- Form submission to the /login route -->
+                <label for="username">Username:</label> <!-- Label for username input -->
+                <input type="text" id="username" name="username" required> <!-- Text input for username -->
+
+                <label for="password">Password:</label> <!-- Label for password input -->
+                <input type="password" id="password" name="password" required> <!-- Password input field -->
+
+                <!-- Link to sign-up page -->
+                <a href="/signup">Don't have an account? Sign up here</a><br><br>
+
+                <!-- Submit button for the form -->
                 <input type="submit" value="Login">
             </form>
         </div>
     </div>
 </body>
+
 </html>

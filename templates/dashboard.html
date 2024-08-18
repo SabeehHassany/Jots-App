@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Content Dashboard</title>
     <link rel="stylesheet" href="/static/styles.css"> <!-- Link to external CSS file for styling -->
 </head>
+
 <body>
     <!-- Sidebar navigation -->
     <div class="sidebar">
@@ -22,15 +24,17 @@
         <div class="header">
             <h1>Content Dashboard</h1> <!-- Title for the page -->
         </div>
+        
         <!-- Content entry form -->
         <div class="container">
             <h1>Enter New Content</h1> <!-- Form heading -->
             <form method="POST" action="/dashboard"> <!-- Form submission to the /dashboard route -->
-                <label for="content">Enter Content:</label>
+                <label for="content">Enter Content:</label> <!-- Label for content input -->
                 <input type="text" id="content" name="content"> <!-- Text input for new content -->
                 <input type="submit" value="Submit"> <!-- Submit button for the form -->
             </form>
         </div>
     </div>
 </body>
+
 </html>
