@@ -14,7 +14,7 @@
         <div>
             <a href="/">Home</a> <!-- Link to Home page -->
             <a href="/dashboard">Dashboard</a> <!-- Link to Content Dashboard -->
-            <a href="/channels">Channels</a> <!-- New Channels link -->
+            <a href="/channels">Channels</a> <!-- Link to Channels -->
         </div>
         <a href="/logout">Logout</a> <!-- Link to log out of the application -->
     </div>
@@ -25,17 +25,26 @@
         <div class="header">
             <h1>Content Dashboard</h1> <!-- Title for the page -->
         </div>
-        
         <!-- Content entry form -->
         <div class="container">
             <h1>Enter New Content</h1> <!-- Form heading -->
             <form method="POST" action="/dashboard"> <!-- Form submission to the /dashboard route -->
-                <label for="content">Enter Content:</label> <!-- Label for content input -->
-                <input type="text" id="content" name="content"> <!-- Text input for new content -->
+                <label for="content">Enter Content:</label>
+                <input type="text" id="content" name="content" required> <!-- Text input for new content -->
+
+                <label for="channelID">Select Channel (optional):</label>
+                <select id="channelID" name="channelID">
+                    <option value="">No Channel</option>
+                    {{range .Channels}}
+                    <option value="{{.ID}}">{{.Name}}</option>
+                    {{end}}
+                </select>
+
                 <input type="submit" value="Submit"> <!-- Submit button for the form -->
             </form>
         </div>
     </div>
 </body>
+</html>
 
 </html>

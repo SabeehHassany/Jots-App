@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.ChannelName}} Jots</title>
+    <link rel="stylesheet" href="/static/styles.css"> <!-- Link to external CSS file for styling -->
+</head>
+
+<body>
+    <!-- Sidebar navigation -->
+    <div class="sidebar">
+        <div>
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/channels">Channels</a> <!-- Link to Channels page -->
+        </div>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-content">
+        <!-- Header section -->
+        <div class="header">
+            <h1>{{.ChannelName}} Jots</h1> <!-- Display the channel name -->
+        </div>
+        <!-- Displaying jots -->
+        <div>
+            {{range .Jots}}
+            <div class="jot">
+                <p>{{.Text}}</p> <!-- Display the text of the jot -->
+                <small>Posted by {{.Username}} on {{.CreatedAt.Format "Jan 2, 2006 at 3:04pm"}}</small> <!-- Display the username and timestamp -->
+            </div>
+            {{else}}
+            <p>No jots in this channel yet!</p> <!-- Message if there are no jots to display -->
+            {{end}}
+        </div>
+    </div>
+</body>
+
+</html>

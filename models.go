@@ -81,10 +81,15 @@ func CreateUser(username, password string) error {
 }
 
 // SaveContentToDB saves a new jot (content) to the database for the given user ID.
-// It logs an error message if the operation fails.
-func SaveContentToDB(content string, userID int) {
-	// Insert the new jot into the content table
-	_, err := db.Exec("INSERT INTO content (text, user_id) VALUES (?, ?)", content, userID)
+// If channelID is 0, the content is saved without a channel.
+func SaveContentToDB(content string, userID, channelID int) {
+	var err error
+	if channelID > 0 {
+		_, err = db.Exec("INSERT INTO content (text, user_id, channel_id) VALUES (?, ?, ?)", content, userID, channelID)
+	} else {
+		_, err = db.Exec("INSERT INTO content (text, user_id) VALUES (?, ?)", content, userID)
+	}
+
 	if err != nil {
 		log.Printf("Error saving content: %v", err)
 	}
@@ -222,4 +227,57 @@ func IsUserFollowingChannel(userID, channelID int) (bool, error) {
 		return false, err
 	}
 	return exists, nil
+}
+
+// FetchJotsByChannel retrieves jots for a specific channel from the database
+func FetchJotsByChannel(channelID int) ([]Jot, error) {
+	rows, err := db.Query(`
+        SELECT content.text, users.username, DATE_FORMAT(content.created_at, '%Y-%m-%d %H:%i:%s') 
+        FROM content 
+        JOIN users ON content.user_id = users.id 
+        WHERE content.channel_id = ?
+        ORDER BY content.created_at DESC
+    `, channelID)
+	if err != nil {
+		log.Printf("Query error: %v", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var jots []Jot
+	for rows.Next() {
+		var jot Jot
+		var createdAtStr string
+		err := rows.Scan(&jot.Text, &jot.Username, &createdAtStr)
+		if err != nil {
+			log.Printf("Scan error: %v", err)
+			return nil, err
+		}
+
+		jot.CreatedAt, err = time.Parse("2006-01-02 15:04:05", createdAtStr)
+		if err != nil {
+			log.Printf("Time parse error: %v", err)
+			return nil, err
+		}
+
+		jots = append(jots, jot)
+	}
+
+	if err = rows.Err(); err != nil {
+		log.Printf("Rows iteration error: %v", err)
+		return nil, err
+	}
+
+	return jots, nil
+}
+
+// GetChannelNameByID retrieves the name of the channel by its ID
+func GetChannelNameByID(channelID int) (string, error) {
+	var channelName string
+	err := db.QueryRow("SELECT name FROM channels WHERE id = ?", channelID).Scan(&channelName)
+	if err != nil {
+		log.Printf("Error retrieving channel name: %v", err)
+		return "", err
+	}
+	return channelName, nil
 }

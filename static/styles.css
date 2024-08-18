@@ -234,3 +234,53 @@ input[type="submit"]:hover {
 .channel-bubble button:hover {
     background-color: #0056b3; /* Darker blue on hover */
 }
+
+/* Style for the dropdown (select) element */
+select {
+    padding: 10px; /* Same padding as input fields */
+    margin-bottom: 10px; /* Same margin as input fields */
+    border-radius: 4px; /* Round corners to match input fields */
+    border: 1px solid #ccc; /* Same border as input fields */
+    width: 100%; /* Make the dropdown take up the full width */
+    font-size: 16px; /* Font size matching the input fields */
+    background-color: white; /* White background */
+    color: #333; /* Text color */
+    appearance: none; /* Remove default styling for better consistency */
+    -webkit-appearance: none; /* Remove default styling in Safari */
+    -moz-appearance: none; /* Remove default styling in Firefox */
+}
+
+/* Add a little arrow to indicate the dropdown */
+select {
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D'http%3A//www.w3.org/2000/svg'%20viewBox%3D'0%200%2024%2024'%20width%3D'18'%20height%3D'18'%3E%3Cpath%20d%3D'M7%2010l5%205%205-5z'%20fill%3D'%23999'%20/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position-x: 100%;
+    background-position-y: 50%;
+    background-color: white;
+    padding-right: 20px; /* Ensures the text doesn't overlap with the arrow */
+}
+
+/* Adjust the dropdown on focus */
+select:focus {
+    border-color: #007bff; /* Highlight border color on focus */
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a subtle shadow for focus */
+}
+
+/* Remove the default arrow in Internet Explorer */
+select::-ms-expand {
+    display: none;
+}
+
+/* Style the dropdown arrow */
+select {
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23999" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position-x: 100%;
+    background-position-y: 50%;
+}
+
+/* Hover effect for the dropdown */
+select:hover {
+    border-color: #0056b3; /* Darker border on hover */
+}

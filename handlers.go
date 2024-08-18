@@ -49,24 +49,44 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 // DashboardHandler displays the content submission page.
 // It allows authenticated users to submit new content (jots).
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {
-	// Redirect to login page if the user is not authenticated
 	if !IsAuthenticated(r) {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
-	// Handle content submission
+	// Fetch all channels to display in the dropdown
+	userID := GetAuthenticatedUserID(r)
+	channels, err := FetchAllChannels(userID)
+	if err != nil {
+		http.Error(w, "Unable to fetch channels", http.StatusInternalServerError)
+		return
+	}
+
 	if r.Method == "POST" {
 		r.ParseForm()
 		content := r.FormValue("content")
+		channelIDStr := r.FormValue("channelID")
+		channelID := 0
+		if channelIDStr != "" {
+			channelID, err = strconv.Atoi(channelIDStr)
+			if err != nil {
+				http.Error(w, "Invalid channel ID", http.StatusBadRequest)
+				return
+			}
+		}
 		userID := GetAuthenticatedUserID(r)
-		SaveContentToDB(content, userID)
+		SaveContentToDB(content, userID, channelID)
 		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 		return
 	}
 
-	// Render the dashboard template
-	templates.ExecuteTemplate(w, "dashboard.html", nil)
+	data := struct {
+		Channels []Channel
+	}{
+		Channels: channels,
+	}
+
+	templates.ExecuteTemplate(w, "dashboard.html", data)
 }
 
 // LoginHandler handles user authentication by checking credentials.
@@ -257,4 +277,44 @@ func FollowChannelHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/channels", http.StatusSeeOther)
+}
+
+// ChannelJotsHandler displays jots for a specific channel
+func ChannelJotsHandler(w http.ResponseWriter, r *http.Request) {
+	// Get the channel ID from the URL path
+	channelIDStr := r.URL.Path[len("/channels/"):]
+	channelID, err := strconv.Atoi(channelIDStr)
+	if err != nil {
+		http.Error(w, "Invalid channel ID", http.StatusBadRequest)
+		return
+	}
+
+	// Fetch jots for the specific channel
+	jots, err := FetchJotsByChannel(channelID)
+	if err != nil {
+		http.Error(w, "Unable to fetch jots for this channel", http.StatusInternalServerError)
+		return
+	}
+
+	// Fetch the channel name for display
+	channelName, err := GetChannelNameByID(channelID)
+	if err != nil {
+		http.Error(w, "Unable to fetch channel details", http.StatusInternalServerError)
+		return
+	}
+
+	// Prepare data to pass to the template
+	data := struct {
+		ChannelName string
+		Jots        []Jot
+	}{
+		ChannelName: channelName,
+		Jots:        jots,
+	}
+
+	// Render the template with the channel jots
+	err = templates.ExecuteTemplate(w, "channel_jots.html", data)
+	if err != nil {
+		http.Error(w, "Unable to render template", http.StatusInternalServerError)
+	}
 }

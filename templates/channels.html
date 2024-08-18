@@ -29,7 +29,7 @@
         <div class="channels-container">
             {{range .Channels}}
             <div class="channel-bubble">
-                <h2>{{.Name}}</h2> <!-- Channel name -->
+                <h2><a href="/channels/{{.ID}}">{{.Name}}</a></h2> <!-- Channel name with link -->
                 <p>{{.FollowerCount}} Followers</p> <!-- Number of followers -->
                 <form method="POST" action="/follow-channel">
                     <input type="hidden" name="channelID" value="{{.ID}}">
@@ -38,8 +38,8 @@
                 </form>
             </div>
             {{end}}
-            
         </div>
     </div>
 </body>
+
 </html>

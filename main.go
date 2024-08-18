@@ -24,6 +24,7 @@ func main() {
 	http.HandleFunc("/channels", ChannelsHandler)            // New Channels route
 	http.HandleFunc("/follow-channel", FollowChannelHandler) // New follow/unfollow route
 	http.HandleFunc("/logout", LogoutHandler)                // Logout route to clear user session
+	http.HandleFunc("/channels/", ChannelJotsHandler)        // Add this to handle specific channels
 
 	// Start the HTTP server on port 8080
 	// ListenAndServe blocks and waits for incoming requests
