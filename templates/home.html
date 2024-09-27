@@ -24,6 +24,12 @@
         <!-- Header section -->
         <div class="header">
             <h1>Jots</h1> <!-- Title for the page -->
+
+            <!-- Notification Badge/Area -->
+            <div id="notification-container" class="notification-container">
+                <span id="notification-count" class="notification-count">0</span> <!-- Notification count -->
+                <div id="notification-list" class="notification-list"></div> <!-- Notification messages -->
+            </div>
         </div>
 
         <!-- Displaying jots -->
@@ -38,6 +44,32 @@
             {{end}}
         </div>
     </div>
+
+    <!-- Include WebSocket Script -->
+    <script>
+        const ws = new WebSocket("ws://localhost:8080/ws");
+    
+        ws.onmessage = function(event) {
+            // Parse the incoming message
+            const message = event.data;
+    
+            // Display the notification
+            const notificationList = document.getElementById("notification-list");
+            const newNotification = document.createElement("div");
+            newNotification.textContent = message;
+            notificationList.appendChild(newNotification);
+    
+            // Update the notification count
+            const notificationCount = document.getElementById("notification-count");
+            notificationCount.textContent = parseInt(notificationCount.textContent) + 1;
+    
+            // Remove the notification after 5 seconds
+            setTimeout(() => {
+                notificationList.removeChild(newNotification);
+                notificationCount.textContent = parseInt(notificationCount.textContent) - 1;
+            }, 5000);
+        };
+    </script>
 </body>
 
 </html>

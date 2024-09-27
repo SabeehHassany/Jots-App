@@ -25,6 +25,10 @@
         <div class="header">
             <h1>Channels</h1> <!-- Title for the page -->
         </div>
+
+        <!-- Notification area -->
+        <div id="notification-area"></div> <!-- Area where notifications will be displayed -->
+
         <!-- List of Channels -->
         <div class="channels-container">
             {{range .Channels}}
@@ -40,6 +44,9 @@
             {{end}}
         </div>
     </div>
+
+    <!-- Include WebSocket JavaScript -->
+    <script src="/static/ws.js"></script> <!-- Include the WebSocket JavaScript file -->
 </body>
 
 </html>

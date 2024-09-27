@@ -25,6 +25,13 @@ func main() {
 	http.HandleFunc("/follow-channel", FollowChannelHandler) // New follow/unfollow route
 	http.HandleFunc("/logout", LogoutHandler)                // Logout route to clear user session
 	http.HandleFunc("/channels/", ChannelJotsHandler)        // Add this to handle specific channels
+	http.HandleFunc("/ws", WebSocketHandler)                 // WebSocket handler
+
+	// Start WebSocket broadcast handler
+	go handleMessages()
+
+	// Start Redis subscriber in a Goroutine
+	go startRedisSubscriber()
 
 	// Start the HTTP server on port 8080
 	// ListenAndServe blocks and waits for incoming requests

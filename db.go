@@ -32,3 +32,15 @@ func init() {
 		log.Fatalf("Error connecting to the database: %v", err)
 	}
 }
+
+func startRedisSubscriber() {
+	pubsub := redisClient.Subscribe(ctx, newJotsChannel)
+	defer pubsub.Close()
+
+	ch := pubsub.Channel()
+
+	for msg := range ch {
+		log.Printf("New message received from Redis: %s", msg.Payload)
+		broadcast <- msg.Payload
+	}
+}

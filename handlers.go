@@ -8,9 +8,12 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv" // Import the strconv package
 	"text/template"
+
+	"github.com/gorilla/websocket" // Import the WebSocket package
 )
 
 // Precompile templates to avoid repeated parsing during each request
@@ -49,12 +52,35 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 // DashboardHandler displays the content submission page.
 // It allows authenticated users to submit new content (jots).
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {
+	// Redirect to login page if the user is not authenticated
 	if !IsAuthenticated(r) {
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
 		return
 	}
 
-	// Fetch all channels to display in the dropdown
+	// Handle content submission
+	if r.Method == "POST" {
+		r.ParseForm()
+		content := r.FormValue("content")
+		channelIDStr := r.FormValue("channelID")
+		var channelID *int
+		if channelIDStr != "" && channelIDStr != "0" {
+			id, err := strconv.Atoi(channelIDStr)
+			if err == nil {
+				channelID = &id
+			}
+		}
+		userID := GetAuthenticatedUserID(r)
+		err := SaveContentToDB(content, userID, channelID)
+		if err != nil {
+			http.Error(w, "Unable to save content", http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+		return
+	}
+
+	// Fetch available channels for the dropdown
 	userID := GetAuthenticatedUserID(r)
 	channels, err := FetchAllChannels(userID)
 	if err != nil {
@@ -62,30 +88,12 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.Method == "POST" {
-		r.ParseForm()
-		content := r.FormValue("content")
-		channelIDStr := r.FormValue("channelID")
-		channelID := 0
-		if channelIDStr != "" {
-			channelID, err = strconv.Atoi(channelIDStr)
-			if err != nil {
-				http.Error(w, "Invalid channel ID", http.StatusBadRequest)
-				return
-			}
-		}
-		userID := GetAuthenticatedUserID(r)
-		SaveContentToDB(content, userID, channelID)
-		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
-		return
-	}
-
+	// Render the dashboard template with the channels
 	data := struct {
 		Channels []Channel
 	}{
 		Channels: channels,
 	}
-
 	templates.ExecuteTemplate(w, "dashboard.html", data)
 }
 
@@ -316,5 +324,74 @@ func ChannelJotsHandler(w http.ResponseWriter, r *http.Request) {
 	err = templates.ExecuteTemplate(w, "channel_jots.html", data)
 	if err != nil {
 		http.Error(w, "Unable to render template", http.StatusInternalServerError)
+	}
+}
+
+// WebSocket clients map to keep track of all connected clients
+var clients = make(map[*websocket.Conn]bool)
+var broadcast = make(chan string)
+
+func broadcastMessage(message string) {
+	for client := range clients {
+		err := client.WriteMessage(websocket.TextMessage, []byte(message))
+		if err != nil {
+			log.Printf("WebSocket write error: %v", err)
+			client.Close()
+			delete(clients, client)
+		}
+	}
+}
+
+func listenForRedisMessages() {
+	pubsub := redisClient.Subscribe(ctx, newJotsChannel)
+	defer pubsub.Close()
+
+	ch := pubsub.Channel()
+	for msg := range ch {
+		broadcastMessage(msg.Payload)
+	}
+}
+
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+}
+
+// WebSocketHandler handles WebSocket requests from the client
+func WebSocketHandler(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Printf("Failed to upgrade to websocket: %v", err)
+		return
+	}
+	defer conn.Close()
+
+	// Add this connection to a list of active clients
+	clients[conn] = true
+
+	for {
+		// Keep the connection open
+		_, _, err := conn.ReadMessage()
+		if err != nil {
+			log.Printf("WebSocket read error: %v", err)
+			delete(clients, conn)
+			break
+		}
+	}
+}
+
+// handleMessages listens for incoming broadcast messages and sends them to all WebSocket clients
+func handleMessages() {
+	for {
+		message := <-broadcast
+		for client := range clients {
+			err := client.WriteMessage(websocket.TextMessage, []byte(message))
+			if err != nil {
+				log.Printf("WebSocket write error: %v", err)
+				client.Close()
+				delete(clients, client)
+			}
+		}
 	}
 }

@@ -284,3 +284,42 @@ select {
 select:hover {
     border-color: #0056b3; /* Darker border on hover */
 }
+
+/* Notification container styling */
+.notification-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    background-color: #f1f1f1;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Notification count styling */
+.notification-count {
+    display: block;
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff0000;
+    text-align: right;
+}
+
+/* Notification list styling */
+.notification-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+/* Individual notification styling */
+.notification-list div {
+    background-color: #ffffff;
+    margin-bottom: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    color: #000000; /* Ensure the text color is black */
+}

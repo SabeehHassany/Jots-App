@@ -10,8 +10,10 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"time"
+	// Import the WebSocket package
 )
 
 // Jot represents a single jot's details, including the text content,
@@ -81,18 +83,31 @@ func CreateUser(username, password string) error {
 }
 
 // SaveContentToDB saves a new jot (content) to the database for the given user ID.
-// If channelID is 0, the content is saved without a channel.
-func SaveContentToDB(content string, userID, channelID int) {
-	var err error
-	if channelID > 0 {
-		_, err = db.Exec("INSERT INTO content (text, user_id, channel_id) VALUES (?, ?, ?)", content, userID, channelID)
-	} else {
-		_, err = db.Exec("INSERT INTO content (text, user_id) VALUES (?, ?)", content, userID)
-	}
-
+// It logs an error message if the operation fails and also publishes a notification to Redis.
+func SaveContentToDB(content string, userID int, channelID *int) error {
+	// Insert the new jot into the content table
+	res, err := db.Exec("INSERT INTO content (text, user_id, channel_id) VALUES (?, ?, ?)", content, userID, channelID)
 	if err != nil {
 		log.Printf("Error saving content: %v", err)
+		return err
 	}
+
+	// Get the ID of the newly inserted content
+	jotID, err := res.LastInsertId()
+	if err != nil {
+		log.Printf("Error getting last insert ID: %v", err)
+		return err
+	}
+
+	// Publish the new jot notification to Redis
+	jotDetails := fmt.Sprintf("New jot posted: %d by user %d in channel %d", jotID, userID, channelID)
+	err = redisClient.Publish(ctx, newJotsChannel, jotDetails).Err()
+	if err != nil {
+		log.Printf("Error publishing to Redis: %v", err)
+		return err
+	}
+
+	return nil
 }
 
 // FetchAllJots retrieves all jots from the database, ordered by their creation date (most recent first).
