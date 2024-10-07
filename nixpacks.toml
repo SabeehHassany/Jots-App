@@ -1,7 +1,15 @@
-[phases]
-  setup = { commands = ["go mod download"] }
-  build = { commands = ["go build -o /app/out main.go db.go models.go handlers.go redis.go"] }
-  start = { commands = ["/app/out"] }
+[phases.setup]
+commands = [
+  "go mod download"
+]
 
-[build]
-  language = "go"
+[phases.build]
+commands = [
+  "go build -o app main.go db.go models.go handlers.go redis.go"
+]
+
+[phases.start]
+commands = [
+  "chmod +x app",  # Ensures the binary has execution permissions
+  "./app"  # Runs the built Go application
+]
