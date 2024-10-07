@@ -3,9 +3,9 @@
 ## **Overview**
 Jots is a rudimentary Twitter clone designed to explore basic functionalities of a social media platform. Users can post short messages, follow specific "channels" (akin to topics), and receive real-time notifications about new content in the channels they follow. This project serves as a learning tool for backend development, database interactions, and real-time communication using WebSockets.
 
-![Alt Text](./images/homescreen.png)
-![Alt Text](./images/channels.png)
-![Alt Text](./images/newjot.png)
+![Alt Text](./photos/homescreen.png)
+![Alt Text](./photos/channels.png)
+![Alt Text](./photos/newjot.png)
 
 
 ---
