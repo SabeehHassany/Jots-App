@@ -10,7 +10,6 @@ Jots is a rudimentary Twitter clone designed to explore basic functionalities of
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Setup and Installation](#setup-and-installation)
-- [How to Run Locally](#how-to-run-locally)
 - [Next Steps](#next-steps)
 
 ---
