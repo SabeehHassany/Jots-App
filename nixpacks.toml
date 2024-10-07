@@ -1,0 +1,8 @@
+[phases]
+  setup = "go install -v"
+  install = "go mod download"
+  build = "go build -o out"
+  start = "./out"
+
+[build]
+  language = "go"
