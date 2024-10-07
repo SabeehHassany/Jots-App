@@ -1,6 +1,5 @@
 [phases]
-  setup = { commands = ["go install"] }
-  install = { commands = ["go mod download"] }
+  setup = { commands = ["go mod download"] }
   build = { commands = ["go build -o /app/out main.go db.go models.go handlers.go redis.go"] }
   start = { commands = ["/app/out"] }
 
