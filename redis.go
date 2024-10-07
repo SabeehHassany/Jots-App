@@ -15,18 +15,20 @@ var ctx = context.Background()
 const newJotsChannel = "new_jots_channel"
 
 func init() {
-	redisURL := os.Getenv("redis://default:qxTNvTjxSCBiyIyYcedBBoRCslvdulvl@redis.railway.internal:6379")
+	// Get the Redis URL from the environment variable
+	redisURL := os.Getenv("REDIS_URL")
 	if redisURL == "" {
 		log.Fatalf("REDIS_URL not set")
 	}
 
-	redisClient = redis.NewClient(&redis.Options{
-		Addr:     redisURL, // Use the Redis URL from the environment variable
-		Password: "",       // No password set by default, adjust if needed
-		DB:       0,        // Use default DB
-	})
+	opt, err := redis.ParseURL(redisURL)
+	if err != nil {
+		log.Fatalf("Failed to parse Redis URL: %v", err)
+	}
 
-	_, err := redisClient.Ping(ctx).Result()
+	redisClient = redis.NewClient(opt)
+
+	_, err = redisClient.Ping(ctx).Result()
 	if err != nil {
 		log.Fatalf("Failed to connect to Redis: %v", err)
 	}
